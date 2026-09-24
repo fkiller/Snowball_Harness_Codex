@@ -21,10 +21,15 @@
     "src",
     "README.md",
     "vendor",
-    "docs"
+    "docs",
+    "scripts"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test tests/protocol.test.mjs"
-  }
+    "test": "npm run build && node --test tests/protocol.test.mjs",
+    "test:package": "node scripts/verify-release-package.mjs"
+  },
+  "bundledDependencies": [
+    "@snowball/plugin-sdk"
+  ]
 }
