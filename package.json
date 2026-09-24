@@ -20,7 +20,8 @@
     "dist",
     "src",
     "README.md",
-    "vendor"
+    "vendor",
+    "docs"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
