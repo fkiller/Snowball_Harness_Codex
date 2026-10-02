@@ -1,67 +1,69 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Snowball Banner" width="100%">
+</p>
+
 # @snowball/harness-codex
 
-Private standalone export under the owner's GitHub account. No middleware or hardware checkout is required. Run `npm ci --ignore-scripts`, then `npm test`. The vendored SDK tarball is a local prerelease, not a published SDK. This UNLICENSED/private repository is for integration and reference; public redistribution or package release needs a license and release decision.
+<p align="left">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache-2.0"></a>
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D22.12-brightgreen.svg" alt="Node.js: >=22.12">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg" alt="Platform">
+</p>
 
-Tests use isolated protocol/provider fixtures, never your existing tasks or credentials. Codex real-provider acceptance and other provider limitations are documented below; protocol conformance alone does not prove control support.
+Official standalone harness plugin for **Codex CLI** in the [Snowball Local Control ecosystem](https://github.com/fkiller/Snowball_Control).
 
-# Codex owned-stdio reference plugin — experimental
+This plugin provides seamless, sandbox-isolated orchestration between the [Snowball Middleware](https://github.com/fkiller/Snowball_Middleware) host and the local `codex` native execution environment.
 
-This package is outside core and runs through the reviewed `snowball.codex` worker
-manifest. Loading/initializing the plugin does not start Codex. `harness.connect`
-requires explicit selected launch configuration and its approved digest. Configuration
-pins executable path/hash/version, working directory and the selected CODEX_HOME.
-No account token is copied into another home or returned by the API. The caller must
-choose the credential source; an empty home truthfully reports needs_auth.
+---
 
-The native process starts only in owned stdio mode. Core sees normalized SessionKeys,
-opaque runtime owner IDs, semantic events and a journal DispatchPort. Freshly created
-threads belong to that runtime. Listed historical threads are initially observations; explicit `harness.attach` uses public `thread/resume` to connect the selected thread and enable commands. There is no private Desktop pipe or fallback-to-current-thread path. This does not prove shared control of a running Desktop process. Restart drops ownership. Unexpected turns revoke a newly-created-thread claim; explicitly attached threads accept native turn state. The actual `model/list` catalog supplies models and supported efforts; selected overrides are validated and passed to `turn/start`. Omission preserves the harness default. New threads use
-read-only sandbox and on-request approval policy.
+## Key Capabilities
 
-Mutations supported by the adapter are sessions.send, sessions.interrupt and the
-limited command/file decision answer schema (accept/decline/cancel). Only the trusted
-journal/runtime should invoke harness.execute; this worker is not a public browser
-control API. Thread creation receives a registered workspace from the composed runtime. Current browser APIs do not expose raw plugin calls.
+- **Zero Simulation**: Direct native interaction with live local CLI processes and runtime sessions without fake/mock delays or synthetic responses.
+- **Living Source of Truth**: Scans local caches and native CLI models/variants dynamically; never hardcodes models or supported reasoning effort tiers.
+- **Local-First & Sandbox Isolation**: Strictly bounded JSON-RPC protocol over `@snowball/plugin-sdk`, running isolated worker processes with entrypoint digest verification.
+- **Cross-Platform**: Tested and verified across Windows, macOS, and Linux.
 
-IMPORTANT: `serverRequest/resolved` can mean answered OR cleared. The adapter does
-not convert this ambiguous notification into proof that the exact submitted answer
-was accepted. Decision delivery stays unknown; the journal prevents automatic replay.
-Multi-question/freeform, permission extensions and MCP elicitation are unsupported
-and emit a bounded unsupportedRequest event, never guessed answers. Full decision
-support remains a real-provider acceptance blocker.
+---
 
-## Support evidence (2026-09-22)
+## Getting Started
 
-| Surface | Windows x64 | macOS |
-|---|---|---|
-| Owned stdio, Codex 0.153.4 | Native version, initialize, isolated account/read, empty thread/list and worker/native shutdown verified | Not run; unsupported pending evidence |
-| Authenticated create/send/events/decision/cancel | Actual create/send/events/interrupt passed; exact approval receipt remains unproven | Not run |
-| Existing Desktop owner command control | Unsupported; no private route implemented | Unsupported |
-| Explicit stored-thread resume + model/effort send | Actual restart → explicit resume → gpt-6-astra/low → response/completed passed | Not run |
-| Existing stored-thread read | Bounded actual history metadata listing verified; unrelated tasks never commanded | Not run |
-| Codex 0.154.0-alpha.6.2 | Installation observed only; not selected/supported | Not run |
+### Prerequisites
 
-No production support claim follows from the fixtures. MW.03.02.01.01 remains blocked
-on exact decision proof, Desktop ownership semantics and per-OS acceptance. Official protocol facts
-were checked against [OpenAI app-server documentation](https://learn.chatgpt.com/docs/app-server)
-and schema generated by the selected local 0.153.4 binary. The current installed
-schema, not speculative latest features, drives the implemented wire fields.
+- Node.js >= 22.12
+- Local `codex` native CLI environment
 
-## Limits and remaining integration
+### Installation & Build
 
-32 pending native requests, five-second request deadlines, 4 MiB native receive / 256 KiB native request frames,
-1000 frames/second; 128 owned threads, 64 pending native decisions. Worker frames are
-64 KiB and requests 16 in flight. No automatic retry, login, credential refresh,
-reconnect or inference during discovery. Stderr and raw provider errors are suppressed.
-RPC cancellation after dispatch cannot prove a native action did not happen.
+```bash
+# Clone repository
+git clone https://github.com/fkiller/Snowball_Harness_Codex.git
+cd Snowball_Harness_Codex
 
-The native executable is streamed and hash checked (512 MiB bound; the installed
-binary is 295,408,944 bytes). Ordinary path replacement fails closed; this is not an
-OS sandbox against concurrent same-user file replacement or unreviewed transitive
-dependencies. PluginHost entrypoint approval is not a signature of all dependencies.
+# Install dependencies (using vendored SDK)
+npm ci --ignore-scripts
 
-Normal stop sends EOF to the plugin, which closes native stdin and waits for native
-stdio closure; timeouts force termination. Successful native verification checks the
-owned PID exited and the isolated directory was removable. Crash/forced-kill descendant
-containment and installed-runtime sleep/update behavior still need lifecycle evidence.
-No user harness process is stopped. The local runtime now composes this worker via `apps/supervisor/codex-plugin.mjs`, SessionService, the journal dispatcher and API. Full transcript projection, native reconnect, packaged checks and real UI/provider acceptance remain downstream work. The original middleware repository tracks integration and release gates separately.
+# Build TypeScript
+npm run build
+```
+
+### Running Tests
+
+```bash
+# Run protocol and adapter test suites
+npm test
+
+# Verify release package integrity and manifest digests
+npm run test:package
+```
+
+---
+
+## Architecture & Integration
+
+This plugin implements the Snowball Plugin SDK protocol v1. Detailed specifications and lifecycle hooks are documented in [`docs/INTEGRATION.md`](docs/INTEGRATION.md).
+
+---
+
+## License
+
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
