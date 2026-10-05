@@ -256,3 +256,5 @@ export class CodexOwnedAdapter extends EventEmitter implements DispatchPort {
   }
   async stop(): Promise<void> { this.disconnected(); await this.rpc.stop(); }
 }
+
+export { harnessPresentation } from './presentation.js';
